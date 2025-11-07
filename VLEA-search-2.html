@@ -1,0 +1,383 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+
+<body>
+n: <div id="nOutput">7</div>  
+  <input type="range" min="1" max="10" value="7" class="slider" id="nValue" onInput="changeN()"> <br><br>
+
+<input type="radio" id="path" name="graph_type" value="path" onChange="changeGraphType()">
+<label for="path">Path</label><br>
+<input type="radio" id="y" name="graph_type" value="y" checked="checked" onChange="changeGraphType()">
+<label for="y">Y Graph</label><br><br><br>
+
+
+
+
+The Graph Matrix:
+<div id = "matrix area"></div>
+
+<br><br>
+
+<button type="button" onClick="calculateSolutions()">Calculate solutions</button>
+
+
+<br><br>
+
+
+The solutions:
+<div id = "solutions area"></div>
+
+</body>
+
+<script>
+
+//CONSTANTS AND VARIABLES
+
+
+
+var n = 7;
+var nMax = 10;
+
+
+function setGraph() {
+
+/*graph = [[0, 1, 0, 0, 0, 0, 0],
+         [1, 0, 1, 0, 0, 0, 0],
+		 [0, 1, 0, 1, 0, 1, 0],
+		 [0, 0, 1, 0, 1, 0, 0],
+		 [0, 0, 0, 1, 0, 0, 0],
+		 [0, 0, 1, 0, 0, 0, 1],
+		 [0, 0, 0, 0, 0, 1, 0]]; */ // Seven vertex Y graph
+		 
+		 
+/*graph = [[0, 1, 0, 0, 1, 0, 0, 1, 0, 0],
+		 [1, 0, 1, 0, 0, 0, 0, 0, 0, 0],
+		 [0, 1, 0, 1, 0, 0, 0, 0, 0, 0],
+		 [0, 0, 1, 0, 0, 0, 0, 0, 0, 0],
+		 [1, 0, 0, 0, 0, 1, 0, 0, 0, 0],
+		 [0, 0, 0, 0, 1, 0, 1, 0, 0, 0],
+		 [0, 0, 0, 0, 0, 1, 0, 0, 0, 0],
+		 [1, 0, 0, 0, 0, 0, 0, 0, 1, 0],
+		 [0, 0, 0, 0, 0, 0, 0, 1, 0, 1],
+		 [0, 0, 0, 0, 0, 0, 0, 0, 1, 0]]; */  // Ten vertex Y
+		 
+		
+/*graph = [[0,1,0,0],
+		 [1,0,1,1],
+		 [0,1,0,0],
+		 [0,1,0,0]]; // 4 vertex Y */
+
+}
+
+
+var graph = [];
+const vertexLabels = [];
+var edgeSums = [];
+var permutation = [];
+var labelsAvailable= [];
+var num = 0;
+var YGraph = true;
+
+//FUNCTIONS
+function printGraphMatrix() {
+	const matrixArea = document.getElementById('matrix area');
+	matrixArea.innerHTML = "";
+	
+	for(let i = 0; i < n; i++) {
+		matrixArea.innerHTML += "<br>\n";
+		for(let j = 0; j < n; j++) {
+			matrixArea.innerHTML += " " + graph[i][j] + " ";
+		}
+	}
+
+}
+
+function printSolution() {
+	num++;
+	const solutionsArea = document.getElementById('solutions area');
+	
+	solutionsArea.innerHTML += "<br><br>\n";
+	solutionsArea.innerHTML += "Number " + num + "<br>\n";
+	solutionsArea.innerHTML += "Vertex labels: ";
+	
+	
+	for(let i = 0; i < n; i++) {
+		solutionsArea.innerHTML += " " + (vertexLabels[i]+1);
+	}
+		
+	solutionsArea.innerHTML += "<br>\n";
+	
+	
+	solutionsArea.innerHTML += "Edge sums: ";
+	
+	for(let i = 0; i < edgeSums.length; i++) {
+		solutionsArea.innerHTML += " " + (edgeSums[i]+2);
+	}
+
+
+}
+
+
+function checkVLEA() {
+	return checkConsecutiveDistinct();
+
+}
+
+
+function checkConsecutiveDistinct() {
+	var answer = true;
+	edgeSums.sort();
+	for(let i = 0; i < edgeSums.length-1; i++) {
+		if(edgeSums[i]+1!=edgeSums[i+1])
+			answer = false;
+	}
+	
+	return answer;
+}
+
+
+function computeEdgeSums ()  {
+	for(let i = 0; i < n; i++) {
+		for(let j = i+1; j < n; j++) {
+			if(graph[i][j]==1)
+				edgeSums.push(vertexLabels[i]+vertexLabels[j]);
+		}
+	}
+
+}
+
+
+function permuteVertexLabels() {
+	for(let i = 0; i < n; i++) {
+		labelsAvailable[i] = i;
+	}
+	
+	for(let i = 0; i < n; i++) {
+		
+		
+		vertexLabels[i]=labelsAvailable[permutation[i]];
+		labelsAvailable.splice(permutation[i], 1);
+
+	}
+
+
+
+}
+
+function incrementPermutation() {
+	permutation[n-1]++;
+	
+	for(let i = n-1; i > 0; i=i-1) {
+		if(permutation[i]>n-1-i) {
+			permutation[i]=0;
+			permutation[i-1]++;
+		}
+	}
+
+}
+
+
+function factorial(k) {
+	val = 1;
+	for(let i = 0; i < k; i++) {
+		val = val*(i+1);
+	}
+	return val;
+}
+
+
+function checkEdgeSums() {
+	var answer = true;
+	var search = false;
+	const min = minEdgeSum();
+	var current = min;
+
+	for(let i = 0; i < edgeSums.length-1; i++) {
+		
+		for(let j = 0; j < edgeSums.length; j++) {
+			if(edgeSums[j] === (current+1)){
+				search = true;
+				current++;
+				break;
+			}
+		}
+		
+	
+		if(!search){
+			answer = false;
+			break;
+			}
+			
+		search = false;
+		
+	}
+
+	return answer;
+}
+
+
+
+function minEdgeSum() {
+	var min = edgeSums[0];
+	
+	for(let i = 1; i < edgeSums.length; i++) {
+		if(min > edgeSums[i]){
+			min = edgeSums[i];
+			}
+	}
+	
+	return min;
+
+
+}
+
+
+
+function changeN() {
+	n = document.getElementById("nValue").value;
+	const nOutput = document.getElementById('nOutput');
+	nOutput.innerHTML = n;
+	initializeGraph();
+	if(YGraph)
+		createY();
+	else
+		createPath();
+	
+	printGraphMatrix()
+
+}
+
+
+function changeGraphType() {
+
+	if(YGraph)
+		YGraph = false;
+	else	
+		YGraph = true;
+
+	initializeGraph();
+	if(YGraph)
+		createY();
+	else
+		createPath();
+		
+	printGraphMatrix();
+
+}
+
+
+function createPath() {
+
+	for(let i = 0; i < n-1; i++) { //Creates a path
+		graph[i][i+1] = 1;
+		graph[i+1][i] = 1;
+
+	}
+}
+
+
+function createY() {
+	var k = parseInt((n-1)/3);
+	const arr = [];
+	arr[0] = 1;
+	arr[1] = arr[0]+k+((n-1)%3>0);
+	arr[2] = arr[1]+k+((n-1)%3>1);
+	arr[3] = parseInt(n);
+	
+	graph[0][arr[0]] = 1;
+	graph[0][arr[1]] = 1;
+	graph[0][arr[2]] = 1;
+	
+	for(let i = 0; i < 3; i++) {
+		graph[arr[i]][0] = 1;
+		for(let j = arr[i]; j < arr[i+1]-1; j++) {
+			graph[j][j+1] = 1;
+			graph[j+1][j] = 1;
+		
+		}
+		
+	}
+	
+	
+}
+
+
+function initializeThings() {
+
+	const solutionsArea = document.getElementById('solutions area');
+	solutionsArea.innerHTML = "";
+	num = 0;
+
+	for(let i = 0; i < n; i++) { // Initializes the permutation
+		permutation[i] = 0;
+	}
+
+	for(let i = 0; i < n; i++) { // Initializes labelsAvailable
+		labelsAvailable[i] = i;
+	}
+
+	for(let i = 0; i < n; i++) { // Initializes labels
+		vertexLabels[i] = i;
+	}
+}
+
+
+function initializeGraph() {
+
+for(let i = 0; i < nMax; i++) { // Initializes graph matrix
+	graph[i] = [];
+	for(let j = 0; j < nMax; j++) {
+		graph[i][j] = 0;
+	}
+
+}
+
+}
+
+//INITIALIZATION
+
+initializeThings();
+
+initializeGraph();
+
+
+
+createY();
+
+
+
+setGraph();
+
+printGraphMatrix();
+
+// DOING STUFF
+
+
+function calculateSolutions() {
+
+	initializeThings();
+
+	for(let i = 0; i < factorial(n); i++) {
+		edgeSums = [];
+		permuteVertexLabels();
+		computeEdgeSums();
+
+		
+		if(checkEdgeSums()) {
+			printSolution();
+		}
+		
+		incrementPermutation();
+	}
+}
+
+
+
+
+
+</script>
+
+</html>
