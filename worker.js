@@ -2,7 +2,8 @@ const vertexLabels = [];
 var edgeSums = [];
 var permutation = [];
 var labelsAvailable= [];
-
+const n;
+const graph;
 
 ///////  HELPER FUNCTIONS  //////////
 
@@ -142,8 +143,8 @@ function initializeThings() {
 
 onmessage = (e) => {
   console.log("Message received from main script");
-  const n = e.data[0];
-  const graph = e.data[1];
+  n = e.data[0];
+  graph = e.data[1];
   initializeThings();
 
 
