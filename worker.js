@@ -1,4 +1,4 @@
-const vertexLabels = [];
+var vertexLabels = [];
 var edgeSums = [];
 var permutation = [];
 var labelsAvailable= [];
@@ -156,7 +156,7 @@ onmessage = (e) => {
 
 			
 			if(checkEdgeSums()) {
-				//printSolution();
+				postMessage(vertexLabels);
 			}
 			
 			incrementPermutation();

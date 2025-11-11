@@ -74,7 +74,7 @@ function setGraph() {
 
 
 var graph = [];
-const vertexLabels = [];
+var vertexLabels = [];
 var edgeSums = [];
 var permutation = [];
 var labelsAvailable= [];
@@ -368,7 +368,8 @@ function calculateSolutions() {
 }
 
 myWorker.onmessage = (e) => {
-  console.log("Message received from worker: " + e.data);
+  vertexLabels = e.data;
+  printSOlution();
 };
 
 
