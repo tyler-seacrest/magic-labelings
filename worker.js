@@ -156,13 +156,15 @@ onmessage = (e) => {
 
 			
 			if(checkEdgeSums()) {
-				postMessage(vertexLabels);
+				postMessage([vertexLabels, i]);
 			}
+			
+			if(i%1000000==0)
+				postMessage([null, i])
 			
 			incrementPermutation();
 		}
 
-  console.log("Posting message back to main script");
-  postMessage(n);
+  console.log("Done!");
 
 };

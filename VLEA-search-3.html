@@ -23,6 +23,10 @@ The Graph Matrix:
 
 <button type="button" onClick="calculateSolutions()">Calculate solutions</button>
 
+<div id = "update"></div>
+
+<br><br>
+
 
 <br><br>
 
@@ -339,6 +343,13 @@ for(let i = 0; i < nMax; i++) { // Initializes graph matrix
 
 }
 
+
+function update(i) {
+	const updateArea = document.getElementById('update');
+	updateArea.innerHTML = "Progress: " + (i/factorial(n));
+
+}
+
 //INITIALIZATION
 
 initializeThings();
@@ -368,8 +379,15 @@ function calculateSolutions() {
 }
 
 myWorker.onmessage = (e) => {
-  vertexLabels = e.data;
-  printSolution();
+  if(e.data[0]!=null){
+	  vertexLabels = e.data[0];
+	  printSolution();
+	  update(e.data[1]);
+  }
+  else{
+	  update(e.data[1]);
+	}
+  }
 };
 
 
