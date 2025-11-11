@@ -2,8 +2,8 @@ const vertexLabels = [];
 var edgeSums = [];
 var permutation = [];
 var labelsAvailable= [];
-const n;
-const graph;
+var n;
+var graph = [];
 
 ///////  HELPER FUNCTIONS  //////////
 
