@@ -1,7 +1,7 @@
-var vertexLabels = [];
-var edgeSums = [];
-var permutation = [];
-var labelsAvailable= [];
+const vertexLabels = [];
+const edgeSums = [];
+const permutation = [];
+const labelsAvailable= [];
 var n;
 var graph = [];
 
@@ -138,6 +138,7 @@ function initializeThings() {
 }
 
 
+
 /////// WORKER CODE  //////////
 
 
@@ -150,7 +151,7 @@ onmessage = (e) => {
 
 
   for(let i = 0; i < factorial(n); i++) {
-			edgeSums = [];
+			edgeSums.length = 0;
 			permuteVertexLabels();
 			computeEdgeSums();
 
