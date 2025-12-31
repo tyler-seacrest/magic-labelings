@@ -160,11 +160,12 @@ function updateStats() {
 	
 	for(let i = 0; i < 2*n-2; i++) {
 	
-		statsArea.innerHTML += "Lower Edge Sum " + (i+1) + ": " + lowerEdgeSumCounts[i];
-	
-		statsArea.innerHTML += "<br>\n";
+		if(lowerEdgeSumCounts[i] > 0) {
+			statsArea.innerHTML += "Lower Edge Sum " + (i+2) + ": " + lowerEdgeSumCounts[i];
 		
+			statsArea.innerHTML += "<br>\n";
 		}
+	}
 }
 
 
@@ -187,6 +188,7 @@ function checkConsecutiveDistinct() {
 
 
 function computeEdgeSums ()  {
+	edgeSums.length = 0;
 	for(let i = 0; i < n; i++) {
 		for(let j = i+1; j < n; j++) {
 			if(graph[i][j]==1)
@@ -427,6 +429,8 @@ function initializeThings() {
 
 	
 }
+
+
 
 
 function initializeGraph() {
