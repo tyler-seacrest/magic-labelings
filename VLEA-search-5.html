@@ -114,7 +114,6 @@ function printSolution() {
 	solutionsArea.innerHTML += "Number " + num + "<br>\n";
 	solutionsArea.innerHTML += "Vertex labels: ";
 	
-	console.log(dividers);
 	
 	for(let i = 0; i < n; i++) {
 		solutionsArea.innerHTML += " " + (vertexLabels[n-1-i]+1);
@@ -318,8 +317,6 @@ function createY() {
 	dividers[arrY[1]] = 1;
 	dividers[arrY[2]] = 1;
 	
-	console.log(dividers);
-	
 	for(let i = 0; i < 3; i++) {
 		graph[arrY[i]][0] = 1;
 		for(let j = arrY[i]; j < arrY[i+1]-1; j++) {
@@ -391,18 +388,7 @@ function initializeThings() {
 		vertexLabels[i] = i;
 	}
 	
-	for(let i = 0; i < n; i++) { // Initializes centralNodeCounts
-		centralNodeCounts[i] = 0;
-	}
-	
-	for(let i = 0; i < 2*n-2; i++) { // Initializes lowerEdgeSumCounts
-		lowerEdgeSumCounts[i] = 0;
-	}	
-	
-	
-	for(let i = 0; i < n; i++) { // Initializes dividers
-		dividers[i] = 0;
-	}	
+
 	
 }
 
@@ -416,6 +402,20 @@ for(let i = 0; i < nMax; i++) { // Initializes graph matrix
 	}
 
 }
+
+
+for(let i = 0; i < n; i++) { // Initializes centralNodeCounts
+		centralNodeCounts[i] = 0;
+	}
+	
+for(let i = 0; i < 2*n-2; i++) { // Initializes lowerEdgeSumCounts
+		lowerEdgeSumCounts[i] = 0;
+	}	
+	
+	
+for(let i = 0; i < n; i++) { // Initializes dividers
+		dividers[i] = 0;
+	}	
 
 }
 
