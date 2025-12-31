@@ -33,7 +33,11 @@ The Graph Matrix:
 <br><br>
 
 
-The solutions:
+Stats:
+<div id = "stats area"></div>
+
+
+The solutions (note:  printed in reverse order from matrix):
 <div id = "solutions area"></div>
 
 </body>
@@ -129,6 +133,36 @@ function printSolution() {
 
 
 
+}
+
+
+function updateStats() {
+	computeEdgeSums();
+	lowerEdgeSumCounts[minEdgeSum()]++;
+	centralNodeCounts[vertexLabels[0]]++;
+	
+	
+	const statsArea = document.getElementById('stats area');
+	
+	statsArea.innerHTML += "<br><br>\n";
+	
+	for(let i = 0; i < n; i++) {
+	
+		statsArea.innerHTML += "Central vertex " + (i+1) + ": " + centralNodeCounts[i];
+	
+		statsArea.innerHTML += "<br>\n";
+		
+		}
+	
+	statsArea.innerHTML += "<br><br>\n";
+	
+	for(let i = 0; i < 2*n-2; i++) {
+	
+		statsArea.innerHTML += "Lower Edge Sum " + (i+1) + ": " + lowerEdgeSumCounts[i];
+	
+		statsArea.innerHTML += "<br>\n";
+		
+		}
 }
 
 
@@ -458,6 +492,7 @@ myWorker.onmessage = (e) => {
   if(e.data[0]!=null){
 	  vertexLabels = e.data[0];
 	  printSolution();
+	  updateStats();
 	  update(e.data[1]);
   }
   else{
