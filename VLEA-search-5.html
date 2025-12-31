@@ -13,7 +13,9 @@ n: <div id="nOutput">7</div>
 <input type="radio" id="y" name="graph_type" value="y" checked="checked" onChange="changeGraphType()">
 <label for="y">Y Graph</label><br>
 <input type="radio" id="cross" name="graph_type" value="cross" onChange="changeGraphType()">
-<label for="cross">Cross Graph</label><br><br><br>
+<label for="cross">Cross Graph</label><br>
+<input type="radio" id="six" name="graph_type" value="six" onChange="changeGraphType()">
+<label for="cross">Six Spider Graph</label><br><br><br>
 
 
 
@@ -302,7 +304,10 @@ function changeN() {
 
 	if(graphType=="cross") 
 		createCross();		
-
+		
+		
+	if(graphType=="six") 
+		createSixSpider();	
 	
 	printGraphMatrix()
 
@@ -323,6 +328,10 @@ function changeGraphType() {
 
 	if(graphType=="cross") 
 		createCross();	
+		
+		
+	if(graphType=="six") 
+		createSixSpider();	
 		
 	printGraphMatrix();
 
@@ -401,6 +410,49 @@ function createCross() {
 	
 	
 }
+
+
+
+function createSixSpider() {
+	var k = parseInt((n-1)/6);
+	const arrSix = [];
+	arrSix[0] = 1;
+	arrSix[1] = arrSix[0]+k+((n-1)%6>0);
+	arrSix[2] = arrSix[1]+k+((n-1)%6>1);
+	arrSix[3] = arrSix[2]+k+((n-1)%6>2);
+	arrSix[4] = arrSix[3]+k+((n-1)%6>3);
+	arrSix[5] = arrSix[4]+k+((n-1)%6>4);
+	arrSix[6] = parseInt(n);
+	
+	graph[0][arrSix[0]] = 1;
+	graph[0][arrSix[1]] = 1;
+	graph[0][arrSix[2]] = 1;	
+	graph[0][arrSix[3]] = 1;
+	graph[0][arrSix[4]] = 1;
+	graph[0][arrSix[5]] = 1;
+	
+	
+	dividers[arrSix[0]] = 1;
+	dividers[arrSix[1]] = 1;
+	dividers[arrSix[2]] = 1;
+	dividers[arrSix[3]] = 1;
+	dividers[arrSix[4]] = 1;
+	dividers[arrSix[5]] = 1;
+	
+	for(let i = 0; i < 6; i++) {
+		graph[arrSix[i]][0] = 1;
+		for(let j = arrSix[i]; j < arrSix[i+1]-1; j++) {
+			graph[j][j+1] = 1;
+			graph[j+1][j] = 1;
+		
+		}
+		
+	}
+	
+	
+}
+
+
 
 
 
