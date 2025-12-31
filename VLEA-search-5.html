@@ -419,7 +419,7 @@ for(let i = 0; i < nMax; i++) { // Initializes graph matrix
 
 function update(i) {
 	const updateArea = document.getElementById('update');
-	updateArea.innerHTML = "Progress: " + (i/factorial(n));
+	updateArea.innerHTML = "Progress: " + Math.round((100000.0*i/factorial(n)))/1000.0 + "%";
 
 }
 

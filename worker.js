@@ -166,6 +166,6 @@ onmessage = (e) => {
 			incrementPermutation();
 		}
 
-  console.log("Done!");
+  postMessage([null, factorial(n)]);
 
 };
