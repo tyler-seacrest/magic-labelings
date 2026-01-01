@@ -1,0 +1,566 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+
+<body>
+n: <div id="nOutput">7</div>  
+  <input type="range" min="1" max="13" value="7" class="slider" id="nValue" onInput="changeN()"> <br><br>
+
+<input type="radio" id="path" name="graph_type" value="path" onChange="changeGraphType()">
+<label for="path">Path</label><br>
+<input type="radio" id="y" name="graph_type" value="y" checked="checked" onChange="changeGraphType()">
+<label for="y">Y Graph</label><br>
+<input type="radio" id="cross" name="graph_type" value="cross" onChange="changeGraphType()">
+<label for="cross">Cross Graph</label><br>
+<input type="radio" id="six" name="graph_type" value="six" onChange="changeGraphType()">
+<label for="cross">Six Spider Graph</label><br><br><br>
+
+
+
+
+The Graph Matrix:
+<div id = "matrix area"></div>
+
+<br><br>
+
+<button type="button" onClick="calculateSolutions()">Calculate solutions</button>
+
+<div id = "update"></div>
+
+<br><br>
+
+
+<br><br>
+
+
+Stats:
+<div id = "stats area"></div>
+
+<br><br><br><br>
+
+
+The solutions (note:  printed in reverse order from matrix):
+<div id = "solutions area"></div>
+
+</body>
+
+<script>
+
+//CONSTANTS AND VARIABLES
+
+
+
+var n = 7;
+var nMax = 13;
+
+
+function setGraph() {
+
+/*graph = [[0, 1, 0, 0, 0, 0, 0],
+         [1, 0, 1, 0, 0, 0, 0],
+		 [0, 1, 0, 1, 0, 1, 0],
+		 [0, 0, 1, 0, 1, 0, 0],
+		 [0, 0, 0, 1, 0, 0, 0],
+		 [0, 0, 1, 0, 0, 0, 1],
+		 [0, 0, 0, 0, 0, 1, 0]]; */ // Seven vertex Y graph
+		 
+		 
+/*graph = [[0, 1, 0, 0, 1, 0, 0, 1, 0, 0],
+		 [1, 0, 1, 0, 0, 0, 0, 0, 0, 0],
+		 [0, 1, 0, 1, 0, 0, 0, 0, 0, 0],
+		 [0, 0, 1, 0, 0, 0, 0, 0, 0, 0],
+		 [1, 0, 0, 0, 0, 1, 0, 0, 0, 0],
+		 [0, 0, 0, 0, 1, 0, 1, 0, 0, 0],
+		 [0, 0, 0, 0, 0, 1, 0, 0, 0, 0],
+		 [1, 0, 0, 0, 0, 0, 0, 0, 1, 0],
+		 [0, 0, 0, 0, 0, 0, 0, 1, 0, 1],
+		 [0, 0, 0, 0, 0, 0, 0, 0, 1, 0]]; */  // Ten vertex Y
+		 
+		
+/*graph = [[0,1,0,0],
+		 [1,0,1,1],
+		 [0,1,0,0],
+		 [0,1,0,0]]; // 4 vertex Y */
+
+}
+
+
+var graph = [];
+var vertexLabels = [];
+var edgeSums = [];
+var permutation = [];
+var labelsAvailable= [];
+var num = 0;
+var graphType = "y";
+var centralNodeCounts = [];
+var lowerEdgeSumCounts = [];
+var dividers = [];
+
+const myWorker = new Worker("worker-2.js");
+
+//FUNCTIONS
+function printGraphMatrix() {
+	const matrixArea = document.getElementById('matrix area');
+	matrixArea.innerHTML = "";
+	
+	for(let i = 0; i < n; i++) {
+		matrixArea.innerHTML += "<br>\n";
+		for(let j = 0; j < n; j++) {
+			matrixArea.innerHTML += " " + graph[i][j] + " ";
+		}
+	}
+
+}
+
+function printSolution() {
+	num++;
+	const solutionsArea = document.getElementById('solutions area');
+	
+	solutionsArea.innerHTML += "<br><br>\n";
+	solutionsArea.innerHTML += "Number " + num + "<br>\n";
+	solutionsArea.innerHTML += "Vertex labels: ";
+	
+	
+	for(let i = 0; i < n; i++) {
+		solutionsArea.innerHTML += " " + (vertexLabels[n-1-i]+1);
+		
+		if(dividers[n-1-i]==1)
+			solutionsArea.innerHTML += " |";
+			
+	}
+		
+	solutionsArea.innerHTML += "<br>\n";
+	
+	
+
+
+
+}
+
+
+function updateStats() {
+	computeEdgeSums();
+	lowerEdgeSumCounts[minEdgeSum()]++;
+	centralNodeCounts[vertexLabels[0]]++;
+	
+	
+	const statsArea = document.getElementById('stats area');
+	
+	statsArea.innerHTML = "<br><br>\n";
+	
+	for(let i = 0; i < n; i++) {
+	
+		statsArea.innerHTML += "Central vertex " + (i+1) + ": " + centralNodeCounts[i];
+	
+		statsArea.innerHTML += "<br>\n";
+		
+		}
+	
+	statsArea.innerHTML += "<br><br>\n";
+	
+	for(let i = 0; i < 2*n-2; i++) {
+	
+		if(lowerEdgeSumCounts[i] > 0) {
+			statsArea.innerHTML += "Lower Edge Sum " + (i+2) + ": " + lowerEdgeSumCounts[i];
+		
+			statsArea.innerHTML += "<br>\n";
+		}
+	}
+}
+
+
+function checkVLEA() {
+	return checkConsecutiveDistinct();
+
+}
+
+
+function checkConsecutiveDistinct() {
+	var answer = true;
+	edgeSums.sort();
+	for(let i = 0; i < edgeSums.length-1; i++) {
+		if(edgeSums[i]+1!=edgeSums[i+1])
+			answer = false;
+	}
+	
+	return answer;
+}
+
+
+function computeEdgeSums ()  {
+	edgeSums.length = 0;
+	for(let i = 0; i < n; i++) {
+		for(let j = i+1; j < n; j++) {
+			if(graph[i][j]==1)
+				edgeSums.push(vertexLabels[i]+vertexLabels[j]);
+		}
+	}
+
+}
+
+
+function permuteVertexLabels() {
+	for(let i = 0; i < n; i++) {
+		labelsAvailable[i] = i;
+	}
+	
+	for(let i = 0; i < n; i++) {
+		
+		
+		vertexLabels[i]=labelsAvailable[permutation[i]];
+		labelsAvailable.splice(permutation[i], 1);
+
+	}
+
+
+
+}
+
+function incrementPermutation() {
+	permutation[n-1]++;
+	
+	for(let i = n-1; i > 0; i=i-1) {
+		if(permutation[i]>n-1-i) {
+			permutation[i]=0;
+			permutation[i-1]++;
+		}
+	}
+
+}
+
+
+function factorial(k) {
+	val = 1;
+	for(let i = 0; i < k; i++) {
+		val = val*(i+1);
+	}
+	return val;
+}
+
+
+function checkEdgeSums() {
+	var answer = true;
+	var search = false;
+	const min = minEdgeSum();
+	var current = min;
+
+	for(let i = 0; i < edgeSums.length-1; i++) {
+		
+		for(let j = 0; j < edgeSums.length; j++) {
+			if(edgeSums[j] === (current+1)){
+				search = true;
+				current++;
+				break;
+			}
+		}
+		
+	
+		if(!search){
+			answer = false;
+			break;
+			}
+			
+		search = false;
+		
+	}
+
+	return answer;
+}
+
+
+
+function minEdgeSum() {
+	var min = edgeSums[0];
+	
+	for(let i = 1; i < edgeSums.length; i++) {
+		if(min > edgeSums[i]){
+			min = edgeSums[i];
+			}
+	}
+	
+	return min;
+
+
+}
+
+
+
+function changeN() {
+	n = document.getElementById("nValue").value;
+	const nOutput = document.getElementById('nOutput');
+	nOutput.innerHTML = n;
+
+	initializeGraph();
+
+	if(graphType=="y") 
+		createY();
+
+
+	if(graphType=="path")
+		createPath();
+
+
+	if(graphType=="cross") 
+		createCross();		
+		
+		
+	if(graphType=="six") 
+		createSixSpider();	
+	
+	printGraphMatrix()
+
+}
+
+
+function changeGraphType() {
+	graphType = document.querySelector('input[name="graph_type"]:checked').value;
+
+
+	initializeGraph();
+
+	if(graphType=="y")
+		createY();
+
+	if(graphType=="path")
+		createPath();
+
+	if(graphType=="cross") 
+		createCross();	
+		
+		
+	if(graphType=="six") 
+		createSixSpider();	
+		
+	printGraphMatrix();
+
+}
+
+
+function createPath() {
+
+	for(let i = 0; i < n-1; i++) { //Creates a path
+		graph[i][i+1] = 1;
+		graph[i+1][i] = 1;
+
+	}
+}
+
+
+function createY() {
+	var k = parseInt((n-1)/3);
+	const arrY = [];
+	arrY[0] = 1;
+	arrY[1] = arrY[0]+k+((n-1)%3>0);
+	arrY[2] = arrY[1]+k+((n-1)%3>1);
+	arrY[3] = parseInt(n);
+	
+	graph[0][arrY[0]] = 1;
+	graph[0][arrY[1]] = 1;
+	graph[0][arrY[2]] = 1;
+	
+	dividers[arrY[0]] = 1;
+	dividers[arrY[1]] = 1;
+	dividers[arrY[2]] = 1;
+	
+	for(let i = 0; i < 3; i++) {
+		graph[arrY[i]][0] = 1;
+		for(let j = arrY[i]; j < arrY[i+1]-1; j++) {
+			graph[j][j+1] = 1;
+			graph[j+1][j] = 1;
+		
+		}
+		
+	}
+	
+	
+}
+
+
+function createCross() {
+	var k = parseInt((n-1)/4);
+	const arrCross = [];
+	arrCross[0] = 1;
+	arrCross[1] = arrCross[0]+k+((n-1)%4>0);
+	arrCross[2] = arrCross[1]+k+((n-1)%4>1);
+	arrCross[3] = arrCross[2]+k+((n-1)%4>2);
+	arrCross[4] = parseInt(n);
+	
+	graph[0][arrCross[0]] = 1;
+	graph[0][arrCross[1]] = 1;
+	graph[0][arrCross[2]] = 1;	
+	graph[0][arrCross[3]] = 1;
+	
+	
+	dividers[arrCross[0]] = 1;
+	dividers[arrCross[1]] = 1;
+	dividers[arrCross[2]] = 1;
+	dividers[arrCross[3]] = 1;
+	
+	for(let i = 0; i < 4; i++) {
+		graph[arrCross[i]][0] = 1;
+		for(let j = arrCross[i]; j < arrCross[i+1]-1; j++) {
+			graph[j][j+1] = 1;
+			graph[j+1][j] = 1;
+		
+		}
+		
+	}
+	
+	
+}
+
+
+
+function createSixSpider() {
+	var k = parseInt((n-1)/6);
+	const arrSix = [];
+	arrSix[0] = 1;
+	arrSix[1] = arrSix[0]+k+((n-1)%6>0);
+	arrSix[2] = arrSix[1]+k+((n-1)%6>1);
+	arrSix[3] = arrSix[2]+k+((n-1)%6>2);
+	arrSix[4] = arrSix[3]+k+((n-1)%6>3);
+	arrSix[5] = arrSix[4]+k+((n-1)%6>4);
+	arrSix[6] = parseInt(n);
+	
+	graph[0][arrSix[0]] = 1;
+	graph[0][arrSix[1]] = 1;
+	graph[0][arrSix[2]] = 1;	
+	graph[0][arrSix[3]] = 1;
+	graph[0][arrSix[4]] = 1;
+	graph[0][arrSix[5]] = 1;
+	
+	
+	dividers[arrSix[0]] = 1;
+	dividers[arrSix[1]] = 1;
+	dividers[arrSix[2]] = 1;
+	dividers[arrSix[3]] = 1;
+	dividers[arrSix[4]] = 1;
+	dividers[arrSix[5]] = 1;
+	
+	for(let i = 0; i < 6; i++) {
+		graph[arrSix[i]][0] = 1;
+		for(let j = arrSix[i]; j < arrSix[i+1]-1; j++) {
+			graph[j][j+1] = 1;
+			graph[j+1][j] = 1;
+		
+		}
+		
+	}
+	
+	
+}
+
+
+
+
+
+var centralNodeCounts = [];
+var lowerEdgeSumCounts = [];
+var dividers = [];
+
+function initializeThings() {
+
+	const solutionsArea = document.getElementById('solutions area');
+	solutionsArea.innerHTML = "";
+	num = 0;
+
+	for(let i = 0; i < n; i++) { // Initializes the permutation
+		permutation[i] = 0;
+	}
+
+	for(let i = 0; i < n; i++) { // Initializes labelsAvailable
+		labelsAvailable[i] = i;
+	}
+
+	for(let i = 0; i < n; i++) { // Initializes labels
+		vertexLabels[i] = i;
+	}
+	
+
+	
+}
+
+
+
+
+function initializeGraph() {
+
+for(let i = 0; i < nMax; i++) { // Initializes graph matrix
+	graph[i] = [];
+	for(let j = 0; j < nMax; j++) {
+		graph[i][j] = 0;
+	}
+
+}
+
+
+for(let i = 0; i < n; i++) { // Initializes centralNodeCounts
+		centralNodeCounts[i] = 0;
+	}
+	
+for(let i = 0; i < 2*n-2; i++) { // Initializes lowerEdgeSumCounts
+		lowerEdgeSumCounts[i] = 0;
+	}	
+	
+	
+for(let i = 0; i < n; i++) { // Initializes dividers
+		dividers[i] = 0;
+	}	
+
+}
+
+
+function update(i) {
+	const updateArea = document.getElementById('update');
+	updateArea.innerHTML = "Progress: " + Math.round((100000.0*i/factorial(n)))/1000.0 + "%";
+
+}
+
+//INITIALIZATION
+
+initializeThings();
+
+initializeGraph();
+
+
+
+createY();
+
+
+
+setGraph();
+
+printGraphMatrix();
+
+// DOING STUFF
+
+
+function calculateSolutions() {
+
+	initializeThings();
+
+	console.log(dividers);
+
+	myWorker.postMessage([n, graph, divders]);
+	
+	console.log("Message posted to worker");
+}
+
+myWorker.onmessage = (e) => {
+  if(e.data[0]!=null){
+	  vertexLabels = e.data[0];
+	  printSolution();
+	  updateStats();
+	  update(e.data[1]);
+  }
+  else{
+	  update(e.data[1]);
+	}
+  };
+
+
+</script>
+
+</html>
