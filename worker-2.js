@@ -155,7 +155,7 @@ onmessage = (e) => {
 			permuteVertexLabels();
 			computeEdgeSums();
 
-			console.log(vertexLabels);
+			console.log(vertexLabels[0] + " " + vertexLabels[1]);
 			
 			if(checkEdgeSums()) {
 				postMessage([vertexLabels, i]);
