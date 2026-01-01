@@ -118,14 +118,17 @@ function bin() {
 	
 	for(let i = 0; i < n; i++) {
 		for(let j = 0; j < n; j++) {
-			if(vertexLabels[j]==i)
-				break;
+			
 			if(dividers[j]==1) {
 				localBin++;
 				if(localBin > globalBin) {
 					keepGoing = false;
 					break;
 				}
+			
+			if(vertexLabels[j]==i)
+				break;
+
 			}
 			
 		}
