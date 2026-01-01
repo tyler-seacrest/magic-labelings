@@ -110,12 +110,10 @@ function checkEdgeSums() {
 // Only works for symmetric spiders
 
 function bin() { 
-	var globalBin = 1;
+	var globalBin = 2;
 	var localBin = 0;
 	var keepGoing = true;
 	
-	
-	console.log(dividers);
 	
 	
 	for(let i = 0; i < n; i++) {
