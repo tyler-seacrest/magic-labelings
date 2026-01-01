@@ -4,6 +4,7 @@ const permutation = [];
 const labelsAvailable= [];
 var n;
 var graph = [];
+var dividers = [];
 
 ///////  HELPER FUNCTIONS  //////////
 
@@ -104,7 +105,35 @@ function checkEdgeSums() {
 	return answer;
 }
 
+// This function is to prevent duplicate solutions
+// Only works for symmetric spiders
 
+function bin() { 
+	var globalBin = 1;
+	var localBin = 0;
+	var keepGoing = true;
+	
+	for(let i = 0; i < n; i++) {
+		for(let j = 0; j < n; j++) {
+			if(vertexLabels[j]==i)
+				break;
+			if(dividers[j]==1) {
+				localBin++;
+				if(localBin > globalBin) {
+					keepGoing = false;
+					break;
+				}
+			}
+			
+		}
+		if(!keepGoing)
+			break;
+		if(localBin==globalBin)
+			globalBin++;
+	}
+	
+	return keepGoing;
+}
 
 function minEdgeSum() {
 	var min = edgeSums[0];
@@ -138,6 +167,18 @@ function initializeThings() {
 }
 
 
+function countArr(arr) {
+	var c = 0;
+	
+	for(let i = 0; i < arr.length; i++) {
+			if(arr[i]==1)
+				c++;
+		
+	}
+	
+	return c;
+}
+
 
 /////// WORKER CODE  //////////
 
@@ -146,6 +187,7 @@ onmessage = (e) => {
   console.log("Message received from main script");
   n = e.data[0];
   graph = e.data[1];
+  dividers = e.data[2];
   initializeThings();
 
 
@@ -153,12 +195,15 @@ onmessage = (e) => {
   for(let i = 0; i < factorial(n); i++) {
 			edgeSums.length = 0;
 			permuteVertexLabels();
-			computeEdgeSums();
+
 
 			console.log(vertexLabels[0] + " " + vertexLabels[1]);
 			
-			if(checkEdgeSums()) {
-				postMessage([vertexLabels, i]);
+			if(bin()) {
+				computeEdgeSums();
+				if(checkEdgeSums()) {
+					postMessage([vertexLabels, i]);
+				}
 			}
 			
 			if(i%1000000==0)
