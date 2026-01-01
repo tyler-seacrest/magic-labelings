@@ -81,6 +81,7 @@ function checkEdgeSums() {
 	var search = false;
 	const min = minEdgeSum();
 	var current = min;
+	
 
 	for(let i = 0; i < edgeSums.length-1; i++) {
 		
@@ -112,6 +113,10 @@ function bin() {
 	var globalBin = 1;
 	var localBin = 0;
 	var keepGoing = true;
+	
+	
+	console.log(dividers);
+	
 	
 	for(let i = 0; i < n; i++) {
 		for(let j = 0; j < n; j++) {
@@ -197,7 +202,6 @@ onmessage = (e) => {
 			permuteVertexLabels();
 
 
-			console.log(vertexLabels[0] + " " + vertexLabels[1]);
 			
 			if(bin()) {
 				computeEdgeSums();
