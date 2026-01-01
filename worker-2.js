@@ -133,6 +133,7 @@ function bin() {
 			break;
 		if(localBin==globalBin)
 			globalBin++;
+		localBin = 0;
 	}
 	
 	return keepGoing;
