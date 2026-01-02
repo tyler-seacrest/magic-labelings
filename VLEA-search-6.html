@@ -2,6 +2,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+blue {
+	color: blue;
+}
+</style>
 </head>
 
 <body>
@@ -127,7 +132,7 @@ function printSolution() {
 		solutionsArea.innerHTML += " " + (vertexLabels[n-1-i]+1);
 		
 		if(dividers[n-1-i]==1)
-			solutionsArea.innerHTML += " |";
+			solutionsArea.innerHTML += " <blue>|</blue>";
 			
 	}
 		
@@ -540,8 +545,6 @@ printGraphMatrix();
 function calculateSolutions() {
 
 	initializeThings();
-
-	console.log(dividers);
 
 	myWorker.postMessage([n, graph, dividers]);
 	
