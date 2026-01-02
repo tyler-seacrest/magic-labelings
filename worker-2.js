@@ -134,7 +134,7 @@ function bin() {
 		}
 		if(!keepGoing)
 			break;
-		if(localBin==globalBin)
+		if(localBin==globalBin || globalBin==1)
 			globalBin++;
 		localBin = 0;
 	}
