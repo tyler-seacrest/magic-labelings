@@ -129,11 +129,12 @@ function bin() {
 					keepGoing = false;
 					break;
 				}
+			}
 			
 			if(vertexLabels[j]==i)
 				break;
 
-			}
+			
 			
 		}
 		if(!keepGoing)
