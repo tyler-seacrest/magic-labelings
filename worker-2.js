@@ -121,7 +121,7 @@ function bin() {
 			
 			if(dividers[j]==1) {
 				localBin++;
-				if(localBin > globalBin) {
+				if(localBin >= globalBin) {
 					keepGoing = false;
 					break;
 				}
