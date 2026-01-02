@@ -122,6 +122,10 @@ function bin() {
 			if(dividers[j]==1) {
 				localBin++;
 				if(localBin > globalBin) {
+					console.log("Dividers:");
+					console.log(dividers);
+					console.log("VertexLabels:");
+					console.log(vertexLabels);
 					keepGoing = false;
 					break;
 				}
