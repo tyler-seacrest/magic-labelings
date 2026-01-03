@@ -504,21 +504,27 @@ for(let i = 0; i < nMax; i++) { // Initializes graph matrix
 }
 
 
-for(let i = 0; i < n; i++) { // Initializes centralNodeCounts
-		centralNodeCounts[i] = 0;
-	}
+initializeStats();
 	
-for(let i = 0; i < 2*n-2; i++) { // Initializes lowerEdgeSumCounts
-		lowerEdgeSumCounts[i] = 0;
-	}	
-	
-	
-for(let i = 0; i < n; i++) { // Initializes dividers
-		dividers[i] = 0;
-	}	
 
 }
 
+
+function initializeStats() {
+
+	for(let i = 0; i < n; i++) { // Initializes centralNodeCounts
+			centralNodeCounts[i] = 0;
+		}
+		
+	for(let i = 0; i < 2*n-2; i++) { // Initializes lowerEdgeSumCounts
+			lowerEdgeSumCounts[i] = 0;
+		}	
+		
+		
+	for(let i = 0; i < n; i++) { // Initializes dividers
+			dividers[i] = 0;
+	}
+}
 
 function update(i) {
 	const updateArea = document.getElementById('update');
@@ -548,6 +554,7 @@ printGraphMatrix();
 function calculateSolutions() {
 
 	initializeThings();
+	initializeStats();
 
 	myWorker.postMessage([n, graph]);
 	
