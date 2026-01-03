@@ -2,9 +2,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+blue {
+	color: blue;
+}
+</style>
 </head>
 
 <body>
+
+This javascript code does a brute-force search for VLEA labelings for certain types of trees.
+<br><br><br>
 n: <div id="nOutput">7</div>  
   <input type="range" min="1" max="13" value="7" class="slider" id="nValue" onInput="changeN()"> <br><br>
 
@@ -127,7 +135,7 @@ function printSolution() {
 		solutionsArea.innerHTML += " " + (vertexLabels[n-1-i]+1);
 		
 		if(dividers[n-1-i]==1)
-			solutionsArea.innerHTML += " |";
+			solutionsArea.innerHTML += " <blue>|</blue>";
 			
 	}
 		
@@ -550,7 +558,7 @@ myWorker.onmessage = (e) => {
   if(e.data[0]!=null){
 	  vertexLabels = e.data[0];
 	  printSolution();
-//	  updateStats();
+	  updateStats();
 	  update(e.data[1]);
   }
   else{
