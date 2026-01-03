@@ -119,6 +119,7 @@ function bin() {
 	for(let i = 0; i < n; i++) {
 		for(let j = 0; j < n; j++) {
 			
+			
 			if(dividers[j]==1) {
 				localBin++;
 				if(localBin > globalBin) {
@@ -135,7 +136,7 @@ function bin() {
 		}
 		if(!keepGoing)
 			break;
-		if(localBin==globalBin || globalBin==1)
+		if(localBin==globalBin || (globalBin==1 && vertexLabels[0]!=0))
 			globalBin++;
 		localBin = 0;
 	}
